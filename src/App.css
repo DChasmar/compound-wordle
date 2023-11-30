@@ -1,21 +1,12 @@
 :root {
-  --color-tone-1: var(--black);
-  --color-tone-2: var(--gray-18);
-  --color-tone-3: var(--gray-19);
-  --color-tone-4: var(--gray-13);
-  --color-tone-5: var(--gray-20);
-  --color-tone-6: var(--gray-21);
-  --color-tone-7: var(--white);
-  --color-tone-8: var(--newsGray-100);
-  --color-tone-9: var(--newsGray-10);
-  --color-tone-10: var(--black);
-  --color-tone-11: var(--gray-18);
-  --color-tone-12: var(--newsGray-85);
-  --color-nav-hover: var(--gray-6);
-  --opacity-50: rgba(255, 255, 255, 0.5);
-  --error-background: var(--gray-22);
-  --icon-disabled: var(--gray-23);
-  --background-gray: var(--gray-29);
+  --animation-speed: 1000ms;
+  --default-bg-color: white;
+  --default-border: 2px solid #bbb;
+  --no-border: 0px;
+  --default-text-color: black;
+  --absent-color: #787c7e;
+  --correct-color: #528d4e;
+  --present-color: #b49f39;
 }
 
 .App {
@@ -34,17 +25,16 @@ body {
 }
 
 .game {
-  /* background: white;
-  flex: 1 0 auto;
-  justify-content: center;
-  align-items: center; */
   width: 100vw;
-  height: calc(100vh - 170px);
+  height: calc(100vh - 80px);
   display: flex;
   align-items: center;
   padding-top: 10px;
   flex-direction: column;
+  /* border: var(--default-border); */
 }
+
+/* Prompt CSS */
 
 .prompt {
   position: fixed;
@@ -52,7 +42,6 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  /* background: #5de0c7; */
   background: #ccc; 
   display: flex;
   flex-direction: column;
@@ -61,7 +50,7 @@ body {
   z-index: 999; /* Ensure it's on top of other content */
   text-align: center;
   opacity: 1;
-  transition: opacity 0.5s ease; /* Adjust the duration and timing function as needed */
+  transition: opacity 0.5s ease;
 }
 
 .prompt.hidden {
@@ -136,6 +125,8 @@ body {
   background-color: black;
 }
 
+/* End of prompt CSS */
+
 nav {
   height: 60px;
   width: 100%;
@@ -156,26 +147,21 @@ nav h1 {
   display: grid;
   grid-template-columns: 50% 50%;
   grid-gap: 5px;
-  margin-bottom: -60px;
   /* border: 3px solid black; */
 }
 
 .board {
-  /* width: 50vw;
-  height: 70vh;
+  width: 360px;
+  height: 255px;
   display: grid;
-  flex-direction: column; */
-  width: 300px;
-  height: 320px;
-  display: grid;
-  grid-template-rows: repeat(5, 1fr);
+  grid-template-rows: repeat(4, 1fr);
   grid-gap: 5px;
   padding: 10px;
   box-sizing: border-box;
 }
 
-.final-guess {
-  width: 300px;
+.row3 {
+  width: 100vw;
   height: 75px;
   display: grid;
   grid-template-columns: repeat(10, 1fr);
@@ -184,25 +170,14 @@ nav h1 {
   box-sizing: border-box;
 }
 
-.row {
-  /* flex: 33%;
-  display: flex;
-  flex-direction: row;
-  gap: 2px; */
+.row1,
+.row2 {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   grid-gap: 5px;
 }
 
 .letter {
-  /* flex: 33%;
-  height: 100%;
-  gap: 2px;
-  display: grid;
-  place-items: center;
-  font-size: 30px;
-  font-weight: bolder;
-  color: white; */
   font-family: Arial, Helvetica, sans-serif;
   width: 100%;
   display: inline-flex;
@@ -213,9 +188,10 @@ nav h1 {
   font-weight: bold;
   vertical-align: middle;
   box-sizing: border-box;
-  color: black;
+  background-color: var(--default-bg-color);
+  color: var(--default-text-color);
   text-transform: uppercase;
-  border: 2px solid #bbb;
+  border: var(--default-border);
 }
 
 #correct {
@@ -233,7 +209,6 @@ nav h1 {
 .keyboard {
   width: 100vw;
   height: 200px;
-  /* margin-top: 60px; */
   background-color: white;
 }
 
@@ -269,4 +244,238 @@ nav h1 {
 
 .game-over {
   color: black;
+}
+
+/* For the Phone */
+
+@media only screen and ((max-width: 768px)) {
+  
+  nav {
+    height: 40px;
+    width: 100%;
+    margin: 0;
+    border-bottom: 1.5px solid black;
+    display: grid;
+    place-items: center;
+  }
+  
+  nav h1 {
+    margin: 0;
+    font-family:'Courier New', Courier, monospace;
+    color: black;
+    font-size: 30px;
+  }
+  
+  .board-container {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    grid-gap: 3px;
+    /* border: 3px solid black; */
+  }
+  
+  .board {
+    width: 240px;
+    height: 175px;
+    display: grid;
+    grid-template-rows: repeat(4, 1fr);
+    grid-gap: 3px;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+  
+  .row3 {
+    width: 100vw;
+    height: 55px;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-gap: 3px;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+  
+  .row1,
+  .row2 {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-gap: 3px;
+  }
+  
+  .letter {
+    font-family: Arial, Helvetica, sans-serif;
+    width: 100%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+    line-height: 1;
+    font-weight: bold;
+    vertical-align: middle;
+    box-sizing: border-box;
+    background-color: var(--default-bg-color);
+    color: var(--default-text-color);
+    text-transform: uppercase;
+    border: 1.25px solid #bbb;
+  }
+  
+  .keyboard {
+    width: 100vw;
+    height: 180px;
+    background-color: white;
+    padding: 10px;
+  }
+  
+  .line1,
+  .line2,
+  .line3 {
+    flex: 33%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin: 2px;
+  }
+  
+  .key {
+    width: 9vw;
+    height: 54px;
+    margin: 2px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1em;
+    font-weight: bold;
+    background-color: #d3d6da;
+    color: black;
+    font-family: Arial, Helvetica, sans-serif;
+    cursor: pointer;
+  }
+  
+  #big {
+    width: 12vw;
+    font-size: 0.6em;
+  }
+}
+
+/* Transformations */
+
+@keyframes row-shake {
+  10%, 90% {
+      transform:translateX(-1px)
+  }
+
+  20%, 80% {
+      transform:translateX(2px)
+  }
+
+  30%, 50%, 70% {
+      transform:translateX(-4px)
+  }
+
+  40%, 60% {
+      transform: translateX(4px)
+  }
+}
+
+.invalid {
+  animation-name: row-shake;
+  animation-duration: 600ms
+}
+
+@keyframes revealAbsent {
+  0% {
+    transform: rotateX(0deg);
+    background-color: var(--default-bg-color);
+    border: var(--default-border);
+    color: var(--default-text-color);
+  }
+  50% {
+    transform: rotateX(90deg);
+    background-color: var(--default-bg-color);
+    border: var(--default-border);
+    color: var(--default-text-color);
+  }
+  50.1% {
+    transform: rotateX(90deg);
+    background-color: var(--absent-color);
+    border: var(--no-border);
+    color: white;
+  }
+  100% {
+    transform: rotateX(0deg);
+    background-color: var(--absent-color);
+    border: var(--no-border);
+    color: white;
+  }
+}
+
+@keyframes revealCorrect {
+  0% {
+    transform: rotateX(0deg);
+    background-color: var(--default-bg-color);
+    border: var(--default-border);
+    color: var(--default-text-color);
+  }
+  50% {
+    transform: rotateX(90deg);
+    background-color: var(--default-bg-color);
+    border: var(--default-border);
+    color: var(--default-text-color);
+  }
+  50.1% {
+    transform: rotateX(90deg);
+    background-color: var(--correct-color);
+    border: var(--no-border);
+    color: white;
+  }
+  100% {
+    transform: rotateX(0deg);
+    background-color: var(--correct-color);
+    border: var(--no-border);
+    color: white;
+  }
+}
+
+@keyframes revealPresent {
+  0% {
+    transform: rotateX(0deg);
+    background-color: var(--default-bg-color);
+    border: var(--default-border);
+    color: var(--default-text-color);
+  }
+  50% {
+    transform: rotateX(90deg);
+    background-color: var(--default-bg-color);
+    border: var(--default-border);
+    color: var(--default-text-color);
+  }
+  50.1% {
+    transform: rotateX(90deg);
+    background-color: var(--present-color);
+    border: var(--no-border);
+    color: white;
+  }
+  100% {
+    transform: rotateX(0deg);
+    background-color: var(--present-color);
+    border: var(--no-border);
+    color: white;
+  }
+}
+
+.cell-reveal {
+  animation-duration: 300ms;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+.cell-reveal.absent {
+  animation-name: revealAbsent;
+}
+
+.cell-reveal.correct {
+  animation-name: revealCorrect;
+}
+
+.cell-reveal.present {
+  animation-name: revealPresent;
 }

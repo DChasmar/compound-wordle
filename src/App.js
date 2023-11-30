@@ -99,89 +99,147 @@ function App() {
   //   console.log(correctWord);
   // }, [correctWord]);
 
-  const registerAndReset = (updatedGuessColors) => {
+  const mergeColors = () => {
+    let green2 = new Set();
+    let yellow2 = new Set();
+    let grey2 = new Set();
+    [0, 1].forEach((index) => {
+      greenLetters[index].forEach((value) => {
+        green2.add(value);
+      });
+    });
+    [0, 1].forEach((index) => {
+      yellowLetters[index].forEach((value) => {
+        if (!green2.has(value)) {
+          yellow2.add(value);
+        }
+      });
+    });
+    greyLetters[0].forEach((value) => {
+      if (greyLetters[1].has(value) && !green2.has(value) && !yellow2.has(value)) {
+        grey2.add(value);
+      }
+    });
+    setGreenLetters((prevGreenLetters) => ({
+      ...prevGreenLetters,
+      2: green2
+    }));
+    setYellowLetters((prevYellowLetters) => ({
+      ...prevYellowLetters,
+      2: yellow2
+    }));
+    setGreyLetters((prevGreyLetters) => ({
+      ...prevGreyLetters,
+      2: grey2
+    }));
+  };
+
+  const registerAndReset = (updatedGuessColors, uniqueGreenLetters, uniqueYellowLetters, uniqueGreyLetters) => {
     const newColors = [...boardColors];
     newColors[currAttempt.stage][currAttempt.attempt] = updatedGuessColors;
     setBoardColors(newColors);
-    const allGreen = updatedGuessColors.every(value => value === 2);
-    if (currAttempt.stage < 2) {
-      if (allGreen || currAttempt.attempt === 3) {
-        setCurrAttempt({ stage: currAttempt.stage + 1, attempt: 0, letter: 0 });
-      } else if (currAttempt.attempt < 3) {
-        setCurrAttempt({ stage: currAttempt.stage, attempt: currAttempt.attempt + 1, letter: 0 });
+    setTimeout(() => {
+      setGreenLetters((prevGreenLetters) => ({
+        ...prevGreenLetters,
+        [currAttempt.stage]: uniqueGreenLetters
+      }));
+      setYellowLetters((prevYellowLetters) => ({
+        ...prevYellowLetters,
+        [currAttempt.stage]: uniqueYellowLetters
+      }));
+      setGreyLetters((prevGreyLetters) => ({
+        ...prevGreyLetters,
+        [currAttempt.stage]: uniqueGreyLetters
+      }));
+      const allGreen = updatedGuessColors.every(value => value === 2);
+      if (currAttempt.stage < 2) {
+        if (allGreen || currAttempt.attempt === 3) {
+          if (currAttempt.attempt < 3) {
+            const newBoard = [...board];
+            for (let i = currAttempt.attempt + 1; i < 4; i++) {
+              newBoard[currAttempt.stage][i] = Array(tuple[currAttempt.stage]).fill(" ");
+            }
+            setBoard(newBoard);
+          }
+          if (currAttempt.stage === 1) mergeColors();
+          setCurrAttempt({ stage: currAttempt.stage + 1, attempt: 0, letter: 0 });
+        } else if (currAttempt.attempt < 3) {
+          setCurrAttempt({ stage: currAttempt.stage, attempt: currAttempt.attempt + 1, letter: 0 });
+        }
+      } else if (currAttempt.stage === 2) {
+        if (allGreen) {
+          setGameOver({
+            gameOver: true,
+            guessedWord: true,
+          });
+        } else {
+          setGameOver({
+            gameOver: true,
+            guessedWord: false,
+          });
+        }
       }
-    } else if (currAttempt.stage === 2) {
-      if (allGreen) {
-        setGameOver({
-          gameOver: true,
-          guessedWord: true,
-        });
-      } else {
-        setGameOver({
-          gameOver: true,
-          guessedWord: false,
-        });
-      }
-    } 
+    }, 300 * (tuple[currAttempt.stage] + 1));
   };
 
   const findGrey = (wordGuess, updatedGuessColors, uniqueGreenLetters, uniqueYellowLetters) => {
-    let newGreyLetters = greyLetters;
+    let newGreyLetters = new Set(greyLetters[currAttempt.stage]);
     for (let i = 0; i < wordGuess.length; i++) {
         if (wordGuess[i] !== "_") {
-            newGreyLetters[currAttempt.stage].add(wordGuess[i])
+            newGreyLetters.add(wordGuess[i])
             updatedGuessColors[i] = 0;
         }
     }
     // Remove values from newGreyLetters if they are also present in greenLetters or yellowLetters
-    newGreyLetters[currAttempt.stage].forEach(key => {
-      if (uniqueGreenLetters[currAttempt.stage].has(key) || uniqueYellowLetters[currAttempt.stage].has(key)) {
-        newGreyLetters[currAttempt.stage].delete(key);
+    newGreyLetters.forEach(key => {
+      if (uniqueGreenLetters.has(key) || uniqueYellowLetters.has(key)) {
+        newGreyLetters.delete(key);
       }
     });
-    setGreyLetters(newGreyLetters)
-    registerAndReset(updatedGuessColors) 
+    // setGreyLetters(newGreyLetters);
+    registerAndReset(updatedGuessColors, uniqueGreenLetters, uniqueYellowLetters, newGreyLetters) 
 }
 
   const findYellow = (wordGuess, compound, updatedGuessColors, uniqueGreenLetters) => {
-    let newCompound = compound.join("")
-    let newYellowLetters = yellowLetters;
+    let newCompound = compound.join("");
+    let newYellowLetters = new Set(yellowLetters[currAttempt.stage]);
     for (let i = 0; i < wordGuess.length; i++) {
         if (newCompound.includes(wordGuess[i]) && wordGuess[i] !== "_") {
-            newYellowLetters[currAttempt.stage].add(wordGuess[i])
+            newYellowLetters.add(wordGuess[i]);
             updatedGuessColors[i] = 1;
             newCompound = newCompound.replace(wordGuess[i], "_");
             wordGuess[i] = "_";
         }
     }
     // Remove values from uniqueYellowLetters if they are also present in greenLetters
-    newYellowLetters[currAttempt.stage].forEach(key => {
-      if (uniqueGreenLetters[currAttempt.stage].has(key)) {
-        newYellowLetters[currAttempt.stage].delete(key);
+    newYellowLetters.forEach(key => {
+      if (uniqueGreenLetters.has(key)) {
+        newYellowLetters.delete(key);
       }
     });
-    setYellowLetters(newYellowLetters);
+    // setYellowLetters(newYellowLetters);
     findGrey(wordGuess, updatedGuessColors, uniqueGreenLetters, newYellowLetters)
   }
 
   const findGreen = (wordGuess) => {
     let newWordGuess = [...wordGuess];
     let updatedGuessColors = Array(tuple[currAttempt.stage]).fill(-1);
-    let newGreenLetters = greenLetters;
+    let newGreenLetters = new Set(greenLetters[currAttempt.stage]);
     let compound = [...correctWord[currAttempt.stage]];
     for (let i = 0; i < tuple[currAttempt.stage]; i++) {
         if (newWordGuess[i] === correctWord[currAttempt.stage][i]) {
-            newGreenLetters[currAttempt.stage].add(newWordGuess[i]);
+            newGreenLetters.add(newWordGuess[i]);
             newWordGuess[i] = "_";
             compound[i] = "_";
             updatedGuessColors[i] = 2;
         }
     }
-    setGreenLetters(newGreenLetters);
+    // setGreenLetters(newGreenLetters);
     findYellow(newWordGuess, compound, updatedGuessColors, newGreenLetters)
   }
 
   const onEnter = () => {
+    if (gameOver.gameOver) return;
     if (currAttempt.letter !== tuple[currAttempt.stage]) return;
     disableKeyPressRef.current = true;
 
@@ -192,7 +250,18 @@ function App() {
     if (wordSet.has(currWord.toLowerCase())) {
       findGreen(currWord.toLowerCase());
     } else {
-      alert("Word not found");
+      const rowNumber = `row${currAttempt.stage + 1}`
+      const rowElements = document.getElementsByClassName(rowNumber);
+      const currentRowElement = rowElements[currAttempt.attempt];
+
+      if (currentRowElement) {
+        currentRowElement.classList.add('invalid');
+        
+        // Remove the invalid class after the animation duration
+        setTimeout(() => {
+          currentRowElement.classList.remove('invalid');
+        }, 600);
+      }
     }
     disableKeyPressRef.current = false;
   };
@@ -206,7 +275,7 @@ function App() {
   };
 
   const onSelectLetter = (key) => {
-    if (currAttempt.letter > tuple[currAttempt.stage]) return;
+    if (currAttempt.letter >= tuple[currAttempt.stage]) return;
     const newBoard = [...board];
     newBoard[currAttempt.stage][currAttempt.attempt][currAttempt.letter] = key;
     setBoard(newBoard);
@@ -292,7 +361,8 @@ function App() {
           greenLetters,
           yellowLetters,
           greyLetters,
-          playAgain
+          playAgain,
+          disableKeyPressRef
         }}>
         {showPrompt && <Prompt />}
         <div className='game'>

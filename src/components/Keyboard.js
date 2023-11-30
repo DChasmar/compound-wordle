@@ -15,31 +15,35 @@ function Keyboard() {
     onSelectLetter,
     onEnter,
     onDelete,
+    disableKeyPressRef
   } = useContext(AppContext);
 
   const handleKeyboard = useCallback(
     (event) => {
-      if (gameOver.gameOver) return;
+      if (disableKeyPressRef.current === true) return;
       if (event.key === "Enter") {
         onEnter();
-      } else if (event.key === "Backspace") {
-        onDelete();
-      } else {
-        keys[0].forEach((key) => {
-          if (event.key.toLowerCase() === key.toLowerCase()) {
-            onSelectLetter(key);
-          }
-        });
-        keys[1].forEach((key) => {
-          if (event.key.toLowerCase() === key.toLowerCase()) {
-            onSelectLetter(key);
-          }
-        });
-        keys[2].forEach((key) => {
-          if (event.key.toLowerCase() === key.toLowerCase()) {
-            onSelectLetter(key);
-          }
-        });
+      }
+      if (!gameOver.gameOver) {
+        if (event.key === "Backspace") {
+          onDelete();
+        } else {
+          keys[0].forEach((key) => {
+            if (event.key.toLowerCase() === key.toLowerCase()) {
+              onSelectLetter(key);
+            }
+          });
+          keys[1].forEach((key) => {
+            if (event.key.toLowerCase() === key.toLowerCase()) {
+              onSelectLetter(key);
+            }
+          });
+          keys[2].forEach((key) => {
+            if (event.key.toLowerCase() === key.toLowerCase()) {
+              onSelectLetter(key);
+            }
+          });
+        }
       }
     },
     [currAttempt]
