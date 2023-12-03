@@ -99,24 +99,28 @@ function App() {
   //   console.log(correctWord);
   // }, [correctWord]);
 
-  const mergeColors = () => {
+  const mergeColors = (uniqueGreenLetters, uniqueYellowLetters, uniqueGreyLetters) => {
     let green2 = new Set();
     let yellow2 = new Set();
     let grey2 = new Set();
-    [0, 1].forEach((index) => {
-      greenLetters[index].forEach((value) => {
-        green2.add(value);
-      });
+    greenLetters[0].forEach((value) => {
+      green2.add(value);
     });
-    [0, 1].forEach((index) => {
-      yellowLetters[index].forEach((value) => {
-        if (!green2.has(value)) {
-          yellow2.add(value);
-        }
-      });
+    uniqueGreenLetters.forEach((value) => {
+      green2.add(value);
+    });
+    yellowLetters[0].forEach((value) => {
+      if (!green2.has(value)) {
+        yellow2.add(value);
+      };
+    });
+    uniqueYellowLetters.forEach((value) => {
+      if (!green2.has(value)) {
+        yellow2.add(value);
+      };
     });
     greyLetters[0].forEach((value) => {
-      if (greyLetters[1].has(value) && !green2.has(value) && !yellow2.has(value)) {
+      if (uniqueGreyLetters.has(value) && !green2.has(value) && !yellow2.has(value)) {
         grey2.add(value);
       }
     });
@@ -132,6 +136,22 @@ function App() {
       ...prevGreyLetters,
       2: grey2
     }));
+  };
+
+  const gotBothWords = () => {
+    disableKeyPressRef.current = true;
+    const correctWordArray = correctWord[2].split("");
+    const newBoard = [...board];
+    for (let i = 0; i < tuple[2]; i++) newBoard[2][0][i] = correctWordArray[i].toUpperCase();
+    setBoard(newBoard);
+    setCurrAttempt({ stage: 2, attempt: 0, letter: tuple[2]});
+    const newColors = [...boardColors];
+    newColors[2] = Array.from({ length: 1 }, () => Array(tuple[2]).fill(2));
+    setBoardColors(newColors);
+    setTimeout(() => {
+      setGameOver({ gameOver: true, guessedWord: true });
+      disableKeyPressRef.current = false;
+    }, 300 * (tuple[2] + 1));
   };
 
   const registerAndReset = (updatedGuessColors, uniqueGreenLetters, uniqueYellowLetters, uniqueGreyLetters) => {
@@ -161,8 +181,11 @@ function App() {
             }
             setBoard(newBoard);
           }
-          if (currAttempt.stage === 1) mergeColors();
-          setCurrAttempt({ stage: currAttempt.stage + 1, attempt: 0, letter: 0 });
+          if (currAttempt.stage === 1) mergeColors(uniqueGreenLetters, uniqueYellowLetters, uniqueGreyLetters);
+          const firstSolved = boardColors[0][3].every(value => value === 2) || board[0][3].every(value => value === " ");
+          const secondSolved = boardColors[1][3].every(value => value === 2) || board[1][3].every(value => value === " ");
+          if (firstSolved & secondSolved) gotBothWords();
+          else setCurrAttempt({ stage: currAttempt.stage + 1, attempt: 0, letter: 0 });
         } else if (currAttempt.attempt < 3) {
           setCurrAttempt({ stage: currAttempt.stage, attempt: currAttempt.attempt + 1, letter: 0 });
         }
