@@ -19,15 +19,25 @@ function App() {
     "33": new Set(),
     "34": new Set(),
     "35": new Set(),
+    "36": new Set(),
+    "37": new Set(),
     "43": new Set(),
     "44": new Set(),
     "45": new Set(),
+    "46": new Set(),
+    "47": new Set(),
     "53": new Set(),
     "54": new Set(),
     "55": new Set(),
     "56": new Set(),
+    "57": new Set(),
+    "63": new Set(),
+    "64": new Set(),
     "65": new Set(),
     "66": new Set(),
+    "73": new Set(),
+    "74": new Set(),
+    "75": new Set(),
   });
 
   const [correctWord, setCorrectWord] = useState(["", "", ""]);
@@ -62,15 +72,25 @@ function App() {
         "33": new Set(wordSets.compoundSets[33]),
         "34": new Set(wordSets.compoundSets[34]),
         "35": new Set(wordSets.compoundSets[35]),
+        "36": new Set(wordSets.compoundSets[36]),
+        "37": new Set(wordSets.compoundSets[37]),
         "43": new Set(wordSets.compoundSets[43]),
         "44": new Set(wordSets.compoundSets[44]),
         "45": new Set(wordSets.compoundSets[45]),
+        "46": new Set(wordSets.compoundSets[46]),
+        "47": new Set(wordSets.compoundSets[47]),
         "53": new Set(wordSets.compoundSets[53]),
         "54": new Set(wordSets.compoundSets[54]),
         "55": new Set(wordSets.compoundSets[55]),
         "56": new Set(wordSets.compoundSets[56]),
+        "57": new Set(wordSets.compoundSets[57]),
+        "63": new Set(wordSets.compoundSets[63]),
+        "64": new Set(wordSets.compoundSets[64]),
         "65": new Set(wordSets.compoundSets[65]),
         "66": new Set(wordSets.compoundSets[66]),
+        "73": new Set(wordSets.compoundSets[73]),
+        "74": new Set(wordSets.compoundSets[74]),
+        "75": new Set(wordSets.compoundSets[75])
       });
       const tempTuple = wordSets.chosenTuple;
       const tupleSum = wordSets.chosenTuple[0] + wordSets.chosenTuple[1];
@@ -151,7 +171,7 @@ function App() {
     setTimeout(() => {
       setGameOver({ gameOver: true, guessedWord: true });
       disableKeyPressRef.current = false;
-    }, 300 * (tuple[2] + 1));
+    }, 300 * tuple[2]);
   };
 
   const registerAndReset = (updatedGuessColors, uniqueGreenLetters, uniqueYellowLetters, uniqueGreyLetters) => {
@@ -202,7 +222,7 @@ function App() {
           });
         }
       }
-    }, 300 * (tuple[currAttempt.stage] + 1));
+    }, 300 * tuple[currAttempt.stage]);
   };
 
   const findGrey = (wordGuess, updatedGuessColors, uniqueGreenLetters, uniqueYellowLetters) => {

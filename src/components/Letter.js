@@ -1,8 +1,8 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { AppContext } from "../App";
 
 function Letter({ stage, letterPos, attemptVal }) {
-  const { board, boardColors, gameOver, tuple } = useContext(AppContext);
+  const { board, boardColors } = useContext(AppContext);
   const letter = board[stage][attemptVal][letterPos];
   const color = boardColors[stage][attemptVal][letterPos];
   const colorClassMap = {
@@ -10,10 +10,6 @@ function Letter({ stage, letterPos, attemptVal }) {
     1: "cell-reveal present",
     2: "cell-reveal correct",
   };
-
-  // useEffect(() => {
-  //   if (won) console.log(`${stage}${attemptVal} is won`);
-  // }, [gameOver]);
 
   return (
     <div 
